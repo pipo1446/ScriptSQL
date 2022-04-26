@@ -1,0 +1,59 @@
+
+SELECT  PE.PES_DESCRIPCION, vac.alu_nro_doc_al,vac.alu_codigo, vac.alu_apellido_al + ', ' + vac.alu_nombre_al as alumno, 
+ea.eqa_nro_resolucion, convert(varchar(10),eqa_fecha_normativa,103) fecha_normativa,m.mat_descripcion,
+ea.eqa_nota
+  FROM EQUIVALENCIAS_ALUMNOS EA
+INNER JOIN PLAN_ESTUDIO PE
+ON EA.EQA_PLM_PES_CODIGO = PE.PES_CODIGO AND EA.EQA_PLM_PES_CAR_FAC_CODIGO = PE.PES_CAR_FAC_CODIGO AND EA.EQA_PLM_PES_CAR_CODIGO = PE.PES_CAR_CODIGO
+inner join vw_alumnos_completa vac
+on ea.eqa_alu_codigo  = vac.alu_codigo
+inner join materia m
+on eqa_plm_mat_codigo = m.mat_codigo
+
+WHERE EQA_TIPO = 'I'
+AND ((EQA_LIBRO = '.') OR (EQA_LIBRO IS NULL) OR (EQA_LIBRO = '0') OR (EQA_LIBRO = ' ') OR (EQA_LIBRO = 'NN') )
+--and vac.ext_codigo = 2
+and vac.alu_sir_codigo in(1,5,6,7)
+order by pe.pes_descripcion, alumno
+
+
+
+
+
+
+
+--MATERIAS CON DICTADO EXTERNO
+
+select pe.pes_descripcion, m.mat_descripcion from plan_materias pm
+inner join plan_estudio pe
+on pm.plm_pes_codigo = pe.pes_codigo and pm.plm_pes_car_fac_codigo = pe.pes_car_fac_codigo and pm.plm_pes_car_codigo = pe.pes_car_codigo
+inner join materia m
+on pm.plm_mat_codigo = m.mat_codigo
+where plm_externa = 1
+
+SELECT * FROM VW_PLAN_MATERIAS
+WHERE PLM_EXTERNA = 1
+--PLM_PES_CODIGO,PLM_MAT_CODIGO, PLM_PES_CAR_FAC_CODIGO, PLM_PES_CAR_CODIGO
+
+--SED_CODIGO, FAC_CODIGO, CAR_CODIGO, PES_CODIGO, MAT_CODIGO, ANO, CUATRIMESTRE
+SELECT DISTINCT  COM_SED_CODIGO,CPL_PLM_PES_CAR_FAC_CODIGO, CPL_PLM_PES_CAR_CODIGO,CPL_PLM_PES_CODIGO, CPL_PLM_MAT_CODIGO,COD_COA_ANO,COD_COA_CUATRIMESTRE FROM COM_PLAN CP
+INNER JOIN COMISIONES C
+ON CP.CPL_COM_CODIGO = C.COM_CODIGO
+INNER JOIN COMISION_DIAS CD
+ON C.COM_CODIGO = CD.COD_COA_COM_CODIGO
+LEFT JOIN VW_PLAN_MATERIAS PM
+ON CP.CPL_PLM_PES_CODIGO = PM.PLM_PES_CODIGO AND CP.CPL_PLM_PES_CAR_FAC_CODIGO = PM.PLM_PES_CAR_FAC_CODIGO
+ AND CP.CPL_PLM_PES_CAR_CODIGO = PM.PLM_PES_CAR_CODIGO AND CP.CPL_PLM_MAT_CODIGO = PM.PLM_MAT_CODIGO
+WHERE CD.COD_COA_ANO = 2020
+AND C.COM_VIGENCIA = 1
+AND PM.PLM_EXTERNA = 1
+
+--ORDER BY COM_SED_CODIGO
+--CPL_PLM_PES_CODIGO, CPL_PLM_PES_CAR_FAC_CODIGO, CPL_PLM_PES_CAR_CODIGO, CPL_PLM_MAT_CODIGO
+EXCEPT
+
+SELECT SED_CODIGO, FAC_CODIGO, CAR_CODIGO, PES_CODIGO, MAT_CODIGO, AÑO, CUATRIMESTRE  FROM CARGA_HORARIA_EXTERNAS
+WHERE AÑO = 2020
+
+--PREGUNTAR A DIRECTORES POR HORAS EN DICTADO EXTERNO
+--PRACTICA PROFESIONAL I - INGENIERIA EN SISTEMAS

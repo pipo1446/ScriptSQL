@@ -1,0 +1,19 @@
+
+
+UPDATE ac
+SET ALC_PROVISORIA = NULL
+
+FROM ALUMNO_COMISION ac
+inner join alumnos a
+on ac.ALC_ALU_CODIGO = a.ALU_CODIGO
+where ac.alc_coa_ano = 2020 --CURSADO 2020
+and ac.alc_coa_cuatrimestre in(2,3) -- 2DO CUAT  O ANUAL
+and ac.alc_provisoria = 8 --INSCRIPCIÓN CONDICIONAL
+and YEAR(a.alu_fecha_ingreso_al) = 2020 --ALUMNOS QUE INGRESARON EN EL 2020
+and a.ALU_CONST_TRA = 1 --PRESENTARON CONSTANCIA DE TÍTULO EN TRÁMITE
+and a.ALU_CODIGO_ANT = 0 -- QUE NO HAYAN ESTADO EN OTRA CARRERA ANTERIOR
+
+
+
+
+

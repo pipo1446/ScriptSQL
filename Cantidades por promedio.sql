@@ -1,0 +1,16 @@
+  
+  --cantidad por promedio  
+  SELECT COUNT(*),
+  C.CARRERA, dbo.PROMEDIO_CON_APLAZOS_CONVERTIDO(alu_codigo,alu_pes_car_fac_codigo, alu_pes_car_codigo, alu_pes_codigo) AS PROMEDIO_2
+  FROM ALUMNOS A
+  INNER JOIN PLAN_ESTUDIO PE
+  ON A.ALU_PES_CODIGO = PE.PES_CODIGO AND A.ALU_PES_CAR_CODIGO = PE.PES_CAR_CODIGO AND A.ALU_PES_CAR_FAC_CODIGO = PE.PES_CAR_FAC_CODIGO
+INNER JOIN CARRERAS C
+ON PE.PES_CAR_REAL = C.CAR_COD AND PE.PES_CAR_FAC_CODIGO = C.FAC_COD
+  WHERE A.ALU_SIR_CODIGO = 8 AND A.ALU_FECHA_BAJA_AL BETWEEN '01/03/2016' AND '10/09/2019'
+  AND dbo.PROMEDIO_CON_APLAZOS_CONVERTIDO(A.alu_codigo,A.alu_pes_car_fac_codigo, A.alu_pes_car_codigo, A.alu_pes_codigo) > = 8
+  GROUP BY   C.CARRERA, dbo.PROMEDIO_CON_APLAZOS_CONVERTIDO(A.alu_codigo,A.alu_pes_car_fac_codigo, A.alu_pes_car_codigo, A.alu_pes_codigo)
+  ORDER BY CARRERA, PROMEDIO_2
+
+
+
